@@ -4,11 +4,13 @@
 import AButton from './button'
 import AIcon from './icon'
 import AButtonGroup from './button-group'
+import ACheckbox from './checkbox'
 
 const vant = {
   AButton,
   AIcon,
-  AButtonGroup
+  AButtonGroup,
+  ACheckbox
 }
 
 module.exports = vant
