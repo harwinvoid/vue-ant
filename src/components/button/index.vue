@@ -64,7 +64,7 @@
         if (this.shape) classArray.push(PREFIXCLS + '-' + this.shape)
         if (this.size) classArray.push(PREFIXCLS + '-' + (this.size === SIZE[0] ? 'lg' : 'sm'))
         if (this.loading) classArray.push(PREFIXCLS + '-' + CSS_LOADING)
-        if (!this.text) classArray.push(PREFIXCLS + '-' + CSS_ONLYICON)
+        if (!this.text && this.icon) classArray.push(PREFIXCLS + '-' + CSS_ONLYICON)
         return classArray
       },
       showIcon () {
