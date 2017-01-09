@@ -1,6 +1,6 @@
 # vue-ant
 
-> A Vue.js project
+> harwin
 
 ## Build Setup
 

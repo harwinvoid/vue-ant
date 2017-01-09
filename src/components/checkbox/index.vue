@@ -1,8 +1,8 @@
 <template>
-  <label class="{{PREFIXCLS}}-wrapper">
+  <label class="ant-checkbox-wrapper">
     <span class="ant-checkbox" :class="{'ant-checkbox-checked': checked, 'ant-checkbox-checked-1': checked, 'ant-checkbox-disabled': disabled}">
-      <span class="{{PREFIXCLS}}-inner"></span>
-      <input type="checkbox" class="{{PREFIXCLS}}-input" v-model='checked' :checked="checked" :disabled="disabled">
+      <span class="ant-checkbox-inner"></span>
+      <input type="checkbox" class="ant-checkbox-input" v-model='checked' :checked="checked" :disabled="disabled">
     </span>
     <span><slot></slot></span>
   </label>
@@ -23,6 +23,9 @@
       return {
         PREFIXCLS: 'ant-checkbox'
       }
+    },
+    computed () {
+
     },
     watch: {
       checked (newValue) {
