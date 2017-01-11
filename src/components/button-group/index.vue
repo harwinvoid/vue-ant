@@ -4,22 +4,26 @@
   </div>
 </template>
 <script>
+  import {oneOf} from '../../utils'
   const PREFIXCLS = 'ant-btn-group'
-  const GROUP_SIZE = ['small', 'large']
+  const GROUP_SIZE = ['sm', 'lg']
   export default{
     props: {
       size: {
         type: String,
         validator: function (value) {
-          return GROUP_SIZE.indexOf(value) !== -1
+          return oneOf(value, GROUP_SIZE)
         }
       }
     },
     computed: {
       clazz () {
-        let classArray = [PREFIXCLS]
-        if (this.size) classArray.push(PREFIXCLS + '-' + (this.size === GROUP_SIZE[0] ? 'sm' : 'lg'))
-        return classArray
+        return [
+          `${PREFIXCLS}`,
+          {
+            [`${PREFIXCLS}-${this.size}`]: this.size
+          }
+        ]
       }
     }
   }
