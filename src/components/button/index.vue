@@ -1,91 +1,97 @@
 <template>
-  <button :class='clazz' :type='type' :disabled='disabled'>
-    <slot>
+  <button :class='clazz' :type='htmlType' :disabled='disabled' @click='handleClick'>
     <a-icon v-if='showIcon' :type='iconType'></a-icon>
-    <span v-if='!!text'>{{innerText}}</span>
-    </slot>
+    <span v-if='!onlyIcon'>
+      <slot></slot>
+    </span>
   </button>
 </template>
 <script type="text/javascript">
   import AIcon from '../icon'
+  import {oneOf} from '../../utils'
   const PREFIXCLS = 'ant-btn'
-  const STYLE = ['primary', 'default', 'ghost', 'dashed']
+  const TYPE = ['primary', 'default', 'ghost', 'dashed']
   const SHAPE = ['circle', 'circle-outline']
-  const SIZE = ['large', 'small']
+  const SIZE = ['lg', 'sm']
   const CSS_LOADING = 'loading'
   const CSS_ONLYICON = 'icon-only'
   const HTMLTYPE = ['submit', 'button', 'reset']
-  const rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/
-  const isTwoCNChar = rxTwoCNChar.test.bind(rxTwoCNChar)
-  export default{
+  // const rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/
+  // const isTwoCNChar = rxTwoCNChar.test.bind(rxTwoCNChar)
+  export default {
+    beforeMount () {
+      this.onlyIcon = this.$slots.default === undefined
+    },
     props: {
-      style: {
+      type: {
         type: String,
         validator: function (value) {
-          if (value) return STYLE.indexOf(value) !== -1
+          return oneOf(value, TYPE)
         },
         default: 'default'
       },
-      'type': {
+      htmlType: {
         type: String,
         default: 'button',
         validator: function (value) {
-          return HTMLTYPE.indexOf(value) !== -1
+          return oneOf(value, HTMLTYPE)
         }
       },
       icon: String,
       shape: {
         type: String,
         validator: function (value) {
-          return SHAPE.indexOf(value) !== -1
+          return oneOf(value, SHAPE)
         }
       },
       size: {
         type: String,
         validator: function (value) {
-          return SIZE.indexOf(value) !== -1
+          return oneOf(value, SIZE)
         }
-
       },
       loading: {
         type: Boolean,
         default: false
       },
-      text: String,
       disabled: {
         type: Boolean,
         default: false
       }
     },
+    data () {
+      return {
+        clicked: false,
+        onlyIcon: false
+      }
+    },
+    mounted () {
+      if (this.clickedTimeout) {
+        clearTimeout(this.clickedTimeout)
+      }
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+      }
+    },
     computed: {
       clazz () {
-        let classArray = [PREFIXCLS]
-        if (this.style !== STYLE[1]) classArray.push(PREFIXCLS + '-' + this.style)
-        if (this.shape) classArray.push(PREFIXCLS + '-' + this.shape)
-        if (this.size) classArray.push(PREFIXCLS + '-' + (this.size === SIZE[0] ? 'lg' : 'sm'))
-        if (this.loading) classArray.push(PREFIXCLS + '-' + CSS_LOADING)
-        if (!this.text && this.icon) classArray.push(PREFIXCLS + '-' + CSS_ONLYICON)
-        return classArray
+        return [
+          `${PREFIXCLS}`,
+          {
+            [`${PREFIXCLS}-${this.type}`]: this.type,
+            [`${PREFIXCLS}-${this.shape}`]: this.shape,
+            [`${PREFIXCLS}-${this.size}`]: this.size,
+            [`${PREFIXCLS}-${CSS_LOADING}`]: this.loading,
+            [`${PREFIXCLS}-clicked`]: this.clicked,
+            [`${PREFIXCLS}-${CSS_ONLYICON}`]: this.onlyIcon && (this.icon || this.loading)
+          }
+        ]
       },
       showIcon () {
-        let flag = false
-        if (this.loading) flag = true
-        if (this.icon) flag = true
-        return flag
+        return this.loading || this.icon
       },
       iconType () {
-        let type = ''
-        if (this.loading) type = 'loading'
-        if (this.icon && !this.loading) type = this.icon
-        return type
-      },
-      innerText () {
-        if (this._isString(this.text)) {
-          if (isTwoCNChar(this.text)) {
-            this.text = this.text.split('').join(' ')
-          }
-        }
-        return this.text
+        return this.loading ? CSS_LOADING : this.icon
       }
     },
     components: {
@@ -94,6 +100,17 @@
     methods: {
       _isString (str) {
         return typeof str === 'string'
+      },
+      handleClick () {
+        this.clicked = false
+        this.clickedTimeout = setTimeout(() => {
+          this.clicked = true
+        }, 10)
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.clicked = false
+        }, 500)
+        this.$emit('click')
       }
     }
   }
