@@ -10,13 +10,21 @@
         required: true
       },
       className: String,
-      title: String
+      title: String,
+      spin: {
+        type: Boolean,
+        default: false
+      }
     },
     computed: {
       clazz () {
-        let classArray = [this.className, PREFIXCLS]
-        classArray.push(PREFIXCLS + '-' + this.type)
-        return classArray
+        return [
+          `${PREFIXCLS}`,
+          {
+            [`${PREFIXCLS}-spin`]: this.spin || this.type === 'loading',
+            [`${PREFIXCLS}-${this.type}`]: this.type
+          }
+        ]
       }
     }
   }
